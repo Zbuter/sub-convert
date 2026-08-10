@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="轻量、纯前端的 SubConverter 订阅转换链接生成器。" />
+    <meta name="theme-color" content="#08111f" />
+    <title>SubConvert · 订阅转换</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="ambient ambient-one" aria-hidden="true"></div>
+    <div class="ambient ambient-two" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="SubConvert 首页">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="img">
+            <path d="M8 9.5h13.5a4.5 4.5 0 0 1 0 9H12" />
+            <path d="m15 14-4.5 4.5L15 23" />
+          </svg>
+        </span>
+        <span>SubConvert</span>
+      </a>
+      <div class="header-meta">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span>纯前端 · 数据仅保存在本机</span>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="eyebrow">SUBSCRIPTION TOOLKIT</div>
+        <h1>把订阅转换，变成<br /><span>一次清晰的选择。</span></h1>
+        <p>选择客户端、填入订阅地址，即刻生成 SubConverter 链接。无需登录，不上传配置。</p>
+        <div class="hero-stats" aria-label="功能摘要">
+          <div><strong id="clientCount">17</strong><span>种客户端格式</span></div>
+          <div><strong>2</strong><span>个默认后端</span></div>
+          <div><strong>0</strong><span>项数据上传</span></div>
+        </div>
+      </section>
+
+      <section class="workspace" aria-label="订阅转换工作区">
+        <div class="panel form-panel">
+          <div class="panel-heading">
+            <div>
+              <span class="step-number">01</span>
+              <h2>转换设置</h2>
+            </div>
+            <button class="text-button" id="resetButton" type="button">恢复默认</button>
+          </div>
+
+          <form id="converterForm" novalidate>
+            <fieldset class="field-group">
+              <legend>后端 API</legend>
+              <div class="segmented" id="apiPresets" aria-label="后端 API 预设">
+                <button class="segment active" type="button" data-api="https://api.wcc.best">
+                  <span>WCC</span><small>api.wcc.best</small>
+                </button>
+                <button class="segment" type="button" data-api="https://api.dler.io">
+                  <span>Dler</span><small>api.dler.io</small>
+                </button>
+                <button class="segment" type="button" data-api="custom">
+                  <span>自定义</span><small>其他服务</small>
+                </button>
+              </div>
+              <label class="input-shell compact" id="customApiShell">
+                <span class="input-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M10.5 13.5 13.5 10M8 15.5l-1.2 1.2a3.5 3.5 0 0 1-5-5L5 8.5a3.5 3.5 0 0 1 5 0M16 8.5l1.2-1.2a3.5 3.5 0 0 1 5 5L19 15.5a3.5 3.5 0 0 1-5 0" /></svg>
+                </span>
+                <input id="apiUrl" name="apiUrl" type="url" value="https://api.wcc.best" aria-label="后端 API 地址" autocomplete="url" />
+              </label>
+              <p class="field-hint">可直接填写服务根地址，也可以填写以 <code>/sub</code> 结尾的完整接口。</p>
+            </fieldset>
+
+            <fieldset class="field-group">
+              <legend>订阅地址 <span>必填</span></legend>
+              <label class="textarea-shell">
+                <textarea id="sourceUrls" name="sourceUrls" rows="4" placeholder="https://example.com/your-subscription" aria-label="订阅地址" required></textarea>
+              </label>
+              <div class="field-footer">
+                <p class="field-hint">多个地址请换行输入，生成时会自动用 <code>|</code> 合并。</p>
+                <span id="sourceCount">0 个地址</span>
+              </div>
+            </fieldset>
+
+            <fieldset class="field-group">
+              <div class="legend-row">
+                <legend>远程配置</legend>
+                <label class="switch-control">
+                  <input id="useConfig" type="checkbox" checked />
+                  <span class="switch" aria-hidden="true"></span>
+                  <span>启用</span>
+                </label>
+              </div>
+              <label class="input-shell" id="configShell">
+                <span class="input-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z" /><path d="M15 3v5h4M9 13h7M9 17h5" /></svg>
+                </span>
+                <input id="configUrl" name="configUrl" type="url" value="https://raw.githubusercontent.com/Zbuter/clash-config-ini/refs/heads/main/config.ini" aria-label="远程配置地址" autocomplete="url" />
+              </label>
+              <p class="field-hint">默认使用 Clash 规则配置，也可以替换为任意公开的 INI 配置地址。</p>
+            </fieldset>
+
+            <fieldset class="field-group">
+              <div class="legend-row">
+                <legend>客户端类型</legend>
+                <span class="selection-label" id="selectedClientLabel">Clash</span>
+              </div>
+              <div class="client-grid" id="clientGrid" role="radiogroup" aria-label="客户端类型"></div>
+            </fieldset>
+
+            <details class="advanced-settings">
+              <summary>
+                <span>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M10 17h10M4 17h2M14 4v6M10 14v6" /></svg>
+                  高级选项
+                </span>
+                <span class="summary-hint">按需覆盖后端默认值</span>
+              </summary>
+              <div class="advanced-grid">
+                <label class="check-row"><input id="emoji" type="checkbox" checked /><span>添加 Emoji</span></label>
+                <label class="check-row"><input id="udp" type="checkbox" checked /><span>启用 UDP</span></label>
+                <label class="check-row"><input id="sort" type="checkbox" /><span>节点排序</span></label>
+                <label class="check-row"><input id="scv" type="checkbox" /><span>跳过证书验证</span></label>
+                <label class="check-row"><input id="nodeList" type="checkbox" /><span>仅输出节点列表</span></label>
+                <label class="check-row"><input id="newName" type="checkbox" checked /><span>使用新命名规则</span></label>
+              </div>
+            </details>
+          </form>
+        </div>
+
+        <aside class="result-column">
+          <div class="panel result-panel">
+            <div class="panel-heading result-heading">
+              <div>
+                <span class="step-number">02</span>
+                <h2>转换链接</h2>
+              </div>
+              <span class="live-badge"><i aria-hidden="true"></i> 实时生成</span>
+            </div>
+
+            <div class="result-client">
+              <div class="result-client-icon" id="resultClientIcon">CL</div>
+              <div><span>输出格式</span><strong id="resultClientName">Clash</strong></div>
+              <code id="resultTarget">target=clash</code>
+            </div>
+
+            <label class="result-box">
+              <span>生成结果</span>
+              <textarea id="resultUrl" rows="7" readonly placeholder="填写订阅地址后，将在这里生成转换链接"></textarea>
+            </label>
+
+            <p class="validation-message" id="validationMessage" aria-live="polite"></p>
+
+            <div class="result-actions">
+              <button class="primary-button" id="copyButton" type="button" disabled>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2" /><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" /></svg>
+                <span>复制转换链接</span>
+              </button>
+              <button class="icon-button" id="openButton" type="button" disabled aria-label="在新窗口打开转换链接" title="在新窗口打开">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9" /><path d="M18 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6" /></svg>
+              </button>
+            </div>
+
+            <div class="privacy-note">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4.6 2.8 8 7 10 4.2-2 7-5.4 7-10V6z" /><path d="m9 12 2 2 4-4" /></svg>
+              <p><strong>本地生成</strong><br />订阅地址只会写入转换链接，不会发送给本页面。</p>
+            </div>
+          </div>
+
+          <div class="panel quick-guide">
+            <h3>三步完成</h3>
+            <ol>
+              <li><span>1</span><p><strong>粘贴订阅</strong>支持单个或多个订阅地址</p></li>
+              <li><span>2</span><p><strong>选择客户端</strong>自动匹配输出参数</p></li>
+              <li><span>3</span><p><strong>复制链接</strong>导入对应客户端即可</p></li>
+            </ol>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg>
+      <span>已复制到剪贴板</span>
+    </div>
+
+    <footer>
+      <span>SubConvert Frontend</span>
+      <span>兼容 SubConverter v0.9.x</span>
+    </footer>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
