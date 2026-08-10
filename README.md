@@ -8,7 +8,8 @@
 
 - 默认后端：`https://api.wcc.best`、`https://api.dler.io`
 - 支持自定义 SubConverter 后端地址
-- 默认远程配置：`https://raw.githubusercontent.com/Zbuter/clash-config-ini/refs/heads/main/config.ini`
+- 内置远程配置：[`config.ini`](./config.ini)
+- 默认远程配置：`https://zbuter.github.io/sub-convert/config.ini`
 - 支持自定义或关闭远程配置
 - 支持多个订阅地址（每行一个）
 - 覆盖 Clash、sing-box、Surge、Quantumult、Loon、Surfboard 及节点列表等输出类型
@@ -32,6 +33,7 @@ python -m http.server 4173
 - `index.html`
 - `styles.css`
 - `app.js`
+- `config.ini`
 
 ## 注意
 

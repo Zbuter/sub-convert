@@ -1,7 +1,7 @@
 const DEFAULTS = Object.freeze({
   apiUrl: "https://api.wcc.best",
   sourceUrls: "",
-  configUrl: "https://raw.githubusercontent.com/Zbuter/clash-config-ini/refs/heads/main/config.ini",
+  configUrl: "https://zbuter.github.io/sub-convert/config.ini",
   useConfig: true,
   clientId: "clash",
   emoji: true,
