@@ -12,6 +12,17 @@ const DEFAULTS = Object.freeze({
   newName: true,
 });
 
+const LEGACY_DEFAULT_CONFIG_URL = "https://raw.githubusercontent.com/Zbuter/clash-config-ini/refs/heads/main/config.ini";
+
+const CONFIG_PRESETS = Object.freeze([
+  { id: "builtin", name: "内置精选", note: "本项目维护", url: DEFAULTS.configUrl, icon: "IN" },
+  { id: "acl-standard", name: "ACL4SSR 标准", note: "均衡规则", url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/config/ACL4SSR_Online.ini", icon: "AS" },
+  { id: "acl-full", name: "ACL4SSR 完整", note: "全量规则", url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/config/ACL4SSR_Online_Full.ini", icon: "AF" },
+  { id: "acl-mini", name: "ACL4SSR 精简", note: "轻量规则", url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/config/ACL4SSR_Online_Mini.ini", icon: "AM" },
+  { id: "acl-noauto", name: "ACL4SSR 无测速", note: "手动选择", url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/config/ACL4SSR_Online_Full_NoAuto.ini", icon: "AN" },
+  { id: "custom", name: "自定义", note: "其他公开 INI", url: "", icon: "+" },
+]);
+
 const CLIENTS = Object.freeze([
   { id: "clash", name: "Clash", note: "Mihomo / Meta", target: "clash", icon: "CL" },
   { id: "clashr", name: "ClashR", note: "ClashR 格式", target: "clashr", icon: "CR" },
@@ -42,6 +53,7 @@ const elements = {
   sourceUrls: $("#sourceUrls"),
   sourceCount: $("#sourceCount"),
   configUrl: $("#configUrl"),
+  configPresets: $("#configPresets"),
   configShell: $("#configShell"),
   useConfig: $("#useConfig"),
   clientGrid: $("#clientGrid"),
@@ -76,6 +88,15 @@ function renderClients() {
     </button>
   `).join("");
   elements.clientCount.textContent = String(CLIENTS.length);
+}
+
+function renderConfigPresets() {
+  elements.configPresets.innerHTML = CONFIG_PRESETS.map((preset) => `
+    <button class="config-option" type="button" data-config-id="${preset.id}">
+      <span class="config-icon">${preset.icon}</span>
+      <span class="config-text"><strong>${preset.name}</strong><small>${preset.note}</small></span>
+    </button>
+  `).join("");
 }
 
 function getSelectedClient() {
@@ -128,6 +149,7 @@ function applyState(state) {
   });
   renderClients();
   syncApiPreset();
+  syncConfigPreset();
   syncConfigState();
   updateResult();
 }
@@ -189,6 +211,18 @@ function syncConfigState() {
   const enabled = elements.useConfig.checked;
   elements.configUrl.disabled = !enabled;
   elements.configShell.classList.toggle("disabled", !enabled);
+  elements.configPresets.querySelectorAll("button").forEach((button) => {
+    button.disabled = !enabled;
+  });
+}
+
+function syncConfigPreset() {
+  const value = elements.configUrl.value.trim();
+  const matchedPreset = CONFIG_PRESETS.find((preset) => preset.url && preset.url === value);
+  const activeId = matchedPreset?.id || "custom";
+  elements.configPresets.querySelectorAll("[data-config-id]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.configId === activeId);
+  });
 }
 
 function saveState(state) {
@@ -198,7 +232,11 @@ function saveState(state) {
 function loadState() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    return saved && typeof saved === "object" ? saved : DEFAULTS;
+    if (!saved || typeof saved !== "object") return DEFAULTS;
+    if (saved.configUrl === LEGACY_DEFAULT_CONFIG_URL) {
+      return { ...saved, configUrl: DEFAULTS.configUrl };
+    }
+    return saved;
   } catch {
     return DEFAULTS;
   }
@@ -247,8 +285,27 @@ elements.clientGrid.addEventListener("click", (event) => {
   updateResult();
 });
 
+elements.configPresets.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-config-id]");
+  if (!button) return;
+  const preset = CONFIG_PRESETS.find((item) => item.id === button.dataset.configId);
+  if (!preset) return;
+  if (preset.id === "custom") {
+    elements.configPresets.querySelectorAll("[data-config-id]").forEach((presetButton) => {
+      presetButton.classList.toggle("active", presetButton === button);
+    });
+    elements.configUrl.focus();
+    elements.configUrl.select();
+    return;
+  }
+  elements.configUrl.value = preset.url;
+  syncConfigPreset();
+  updateResult();
+});
+
 elements.form.addEventListener("input", (event) => {
   if (event.target === elements.apiUrl) syncApiPreset();
+  if (event.target === elements.configUrl) syncConfigPreset();
   if (event.target === elements.useConfig) syncConfigState();
   updateResult();
 });
@@ -267,4 +324,5 @@ elements.resetButton.addEventListener("click", () => {
   showToast("已恢复默认设置");
 });
 
+renderConfigPresets();
 applyState(loadState());

@@ -93,13 +93,14 @@
                   <span>启用</span>
                 </label>
               </div>
+              <div class="config-presets" id="configPresets" aria-label="远程配置预设"></div>
               <label class="input-shell" id="configShell">
                 <span class="input-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z" /><path d="M15 3v5h4M9 13h7M9 17h5" /></svg>
                 </span>
                 <input id="configUrl" name="configUrl" type="url" value="https://zbuter.github.io/sub-convert/config.ini" aria-label="远程配置地址" autocomplete="url" />
               </label>
-              <p class="field-hint">默认使用 Clash 规则配置，也可以替换为任意公开的 INI 配置地址。</p>
+              <p class="field-hint">可快捷选择公共配置，也可以填写任意公开的 SubConverter INI 配置地址。</p>
             </fieldset>
 
             <fieldset class="field-group">
@@ -191,6 +192,6 @@
       <span>兼容 SubConverter v0.9.x</span>
     </footer>
 
-    <script src="./app.js"></script>
+    <script src="./app.js?v=20260810-3"></script>
   </body>
 </html>

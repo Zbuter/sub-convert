@@ -11,6 +11,7 @@
 - 内置远程配置：[`config.ini`](./config.ini)
 - 默认远程配置：`https://zbuter.github.io/sub-convert/config.ini`
 - 支持自定义或关闭远程配置
+- 内置 ACL4SSR 标准、完整、精简、无自动测速等公共配置预设
 - 支持多个订阅地址（每行一个）
 - 覆盖 Clash、sing-box、Surge、Quantumult、Loon、Surfboard 及节点列表等输出类型
 - 实时生成、一键复制或直接打开转换链接

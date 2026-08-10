@@ -171,6 +171,18 @@ textarea { width: 100%; resize: vertical; padding: 14px; border: 0; outline: 0; 
 .switch-control input:checked + .switch { background: var(--accent-dark); }
 .switch-control input:checked + .switch::after { transform: translateX(14px); background: var(--accent); }
 
+.config-presets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 10px; }
+.config-option { display: flex; align-items: center; min-width: 0; gap: 9px; padding: 10px; border: 1px solid var(--border); border-radius: 11px; background: rgba(6, 14, 24, .54); cursor: pointer; transition: transform .18s ease, border-color .18s ease, background .18s ease, opacity .18s ease; }
+.config-option:hover:not(:disabled) { transform: translateY(-1px); border-color: rgba(143, 162, 183, .34); }
+.config-option.active { border-color: var(--border-bright); background: rgba(85, 230, 189, .075); }
+.config-option:disabled { cursor: not-allowed; opacity: .4; }
+.config-icon { display: grid; place-items: center; flex: 0 0 auto; width: 28px; height: 28px; border-radius: 8px; color: #9bb0c5; background: #17283b; font-size: 8px; font-weight: 780; }
+.config-option.active .config-icon { color: #071611; background: var(--accent); }
+.config-text { min-width: 0; display: grid; gap: 2px; text-align: left; }
+.config-text strong, .config-text small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.config-text strong { color: #dce7ee; font-size: 10px; font-weight: 640; }
+.config-text small { color: #687e92; font-size: 8px; }
+
 .client-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; max-height: 310px; padding-right: 4px; overflow-y: auto; scrollbar-color: #2a4055 transparent; }
 .client-option { display: flex; align-items: center; min-width: 0; gap: 9px; padding: 10px; border: 1px solid var(--border); border-radius: 11px; background: rgba(6, 14, 24, .54); cursor: pointer; transition: transform .18s ease, border-color .18s ease, background .18s ease; }
 .client-option:hover { transform: translateY(-1px); border-color: rgba(143, 162, 183, .34); }
@@ -254,6 +266,7 @@ footer { width: min(1180px, calc(100% - 40px)); margin: 36px auto 0; padding: 24
   .segmented { grid-template-columns: 1fr; }
   .segment { grid-template-columns: auto 1fr; align-items: center; }
   .client-grid { grid-template-columns: repeat(2, 1fr); max-height: 360px; }
+  .config-presets { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .advanced-grid { grid-template-columns: repeat(2, 1fr); }
   .result-column { grid-template-columns: 1fr; }
   .summary-hint { display: none; }
